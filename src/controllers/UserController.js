@@ -1,7 +1,10 @@
+const User = require("../models/User");
+
 module.exports = {
     async store(req,res){
         try {
-            return res.json("AAA")
+            const newUser = await User.create(req.body);
+            return res.json(newUser);
         } catch (error) {
             return res.status(400).json({error});
         }
