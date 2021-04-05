@@ -12,7 +12,7 @@ module.exports = {
             return res.status(400).json({error});
         }
     },
-    async getMenu(req, res) {
+    async getRestaurant(req, res) {
         try{
             const rest = await Restaurant
                 .findById(new mongoose.Types.ObjectId(req.params.idRestaurant))
@@ -24,7 +24,7 @@ module.exports = {
                     }
                 });
 
-            return res.json(rest.menu);
+            return res.json(rest);
 
         } catch(error) {
             return res.status(400).json({error});

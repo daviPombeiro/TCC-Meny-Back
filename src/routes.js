@@ -9,6 +9,6 @@ routes.get("/users",UserController.getUsers);
 
 // Restaurant
 routes.post("/restaurant",RestaurantController.createRestaurant);
-routes.get("/menu/:idRestaurant", RestaurantController.getMenu);
+routes.get("/restaurant/:idRestaurant", RestaurantController.getRestaurant);
 
 module.exports = routes;
