@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const jwt = require("jsonwebtoken");
+const bcrypt = require('bcryptjs');
 require("dotenv/config");
 
 module.exports = {
@@ -8,7 +9,8 @@ module.exports = {
             const {email, password} = req.body;
             const user = await User.findOne({email: email});
             if(user != undefined){
-                if(user.password === password){
+                const resultPassword = await bcrypt.compare(password, user.password);
+                if(resultPassword){
                     const token = jwt.sign({user},process.env.SECRET_KEY);
                     return res.json({token});
                 }
