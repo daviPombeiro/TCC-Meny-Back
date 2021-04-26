@@ -7,6 +7,11 @@ _obs: the main database for this project is MongoDB, so the types may be differe
 
 ## Routes
 
+- [/users (post)](#users-post)
+- [/users (get)](#users-get)
+
+#
+<a name="users-post"></a>
 ### /users - post
 Register new user to the database
 #### Parameters:
@@ -40,6 +45,7 @@ Something went wrong
 }
 ```
 #
+<a name="users-get"></a>
 ### /users - get
 Get a list of users
 #### Parameters:
