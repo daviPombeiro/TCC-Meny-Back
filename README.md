@@ -9,7 +9,7 @@ _obs: the main database for this project is MongoDB, so the types may be differe
 
 - [/users (post)](#users-post)
 - [/users (get)](#users-get)
-- [/restaurant (post)](#restaurant-get)
+- [/restaurant (post)](#restaurant-post)
 - [/restaurant/:idRestaurant (get)](#restaurant-id-get)
 
 #
