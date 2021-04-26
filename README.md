@@ -9,6 +9,8 @@ _obs: the main database for this project is MongoDB, so the types may be differe
 
 - [/users (post)](#users-post)
 - [/users (get)](#users-get)
+- [/restaurant (post)](#restaurant-get)
+- [/restaurant/:idRestaurant (get)](#restaurant-id-get)
 
 #
 <a name="users-post"></a>
@@ -72,6 +74,7 @@ Something went wrong
 }
 ```
 #
+<a name="restaurant-post"></a>
 ### /restaurant - post
 Register new restaurant to the database
 #### Parameters:
@@ -155,6 +158,7 @@ Something went wrong
 }
 ```
 #
+<a name="restaurant-id-get"></a>
 ### /restaurant/:idRestaurant - get
 Get the info of a restaurant based on the id given.
 #### Parameters:
