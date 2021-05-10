@@ -9,6 +9,9 @@ const AuthController = require("./controllers/AuthController");
 // User
 routes.post("/users",UserController.store);
 routes.get("/users",UserController.getUsers);
+routes.post("/forgot_password",UserController.forgotPassword);
+routes.post("/verify_token",UserController.verifyToken);
+routes.post("/change_password",UserController.changePassword);
 
 // Restaurant
 routes.post("/restaurant",RestaurantController.createRestaurant);
