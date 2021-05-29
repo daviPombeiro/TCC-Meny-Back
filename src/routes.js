@@ -4,6 +4,7 @@ const auth = require('./auth');
 
 const UserController = require("./controllers/UserController");
 const RestaurantController = require("./controllers/RestaurantController");
+const RestaurantWeekTimeController = require("./controllers/RestaurantWeekTimeController");
 const AuthController = require("./controllers/AuthController");
 
 // User
@@ -15,7 +16,12 @@ routes.post("/change_password",UserController.changePassword);
 
 // Restaurant
 routes.post("/restaurant",RestaurantController.createRestaurant);
-routes.get("/restaurant/:idRestaurant", RestaurantController.getRestaurant);
+routes.get("/restaurant/:idRestaurant", auth, RestaurantController.getRestaurant);
+routes.get("/restaurant", auth,RestaurantController.index);
+
+// Restaurant Week Time
+routes.get("/restaurantWeekTime", auth,RestaurantWeekTimeController.index);
+routes.post("/restaurantWeekTime", auth,RestaurantWeekTimeController.store);
 
 // Login
 routes.post("/login",AuthController.login);
