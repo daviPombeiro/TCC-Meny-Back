@@ -8,7 +8,9 @@ const UserSchema = new mongoose.Schema({
     birthday: {type: Date,required: true},
     cpf: {type: String,required: true},
     tokenPassword: {type: String,required: false},
-    datePassword: {type: Date,required: false}
+    datePassword: {type: Date,required: false},
+    liked: [{type: mongoose.Schema.Types.ObjectId, ref: "Restaurant", required: false}]
+
 }, { timestamps: {} });
 
 module.exports = mongoose.model('User', UserSchema);
