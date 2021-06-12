@@ -18,6 +18,8 @@ routes.post("/change_password",UserController.changePassword);
 // Order
 routes.get("/order/:idOrder", auth, OrderController.getOrder);
 routes.post("/order/make/:idTable", auth, OrderController.makeOrder);
+routes.post("/pay/:idOrder", auth, OrderController.payOrder);
+routes.post("/pay/close/:idOrder", auth, OrderController.closeOrder);
 
 // Table
 routes.get("/table/:idTable", auth, TableController.getTableActive);

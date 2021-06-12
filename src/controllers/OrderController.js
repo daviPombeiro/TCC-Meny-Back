@@ -83,8 +83,46 @@ module.exports = {
                 });
             });
 
-            const a = order.total - order.paid;
+            const a = (order.total - order.paid).toFixed(2);
             return res.json({order: or, total: a});
+
+        } catch(error) {
+            return res.status(400).json({error});
+        }
+    },
+
+    async payOrder(req, res) {
+        const {amount} = req.body;
+        const orderId = req.params.idOrder;
+
+        try{
+            let order = await Order.findById(orderId);
+            order.paid += amount;
+            await order.save();
+
+            return res.json(order);
+
+        } catch(error) {
+            return res.status(400).json({error});
+        }
+    },
+
+    async closeOrder(req, res) {
+        const {amount} = req.body;
+        const orderId = req.params.idOrder;
+
+        try{
+            let order = await Order.findById(orderId);
+            order.paid += amount;
+            order.active = false;
+            const tableId = order.table;
+            await order.save();
+
+            let table = await Table.findById(tableId);
+            table.active = false;
+            await table.save();
+
+            return res.json(order);
 
         } catch(error) {
             return res.status(400).json({error});
