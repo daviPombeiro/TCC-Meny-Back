@@ -6,6 +6,7 @@ const UserController = require("./controllers/UserController");
 const RestaurantController = require("./controllers/RestaurantController");
 const AuthController = require("./controllers/AuthController");
 const OrderController = require("./controllers/OrderController");
+const TableController = require("./controllers/TableController");
 
 // User
 routes.post("/users",UserController.store);
@@ -15,7 +16,10 @@ routes.post("/verify_token",UserController.verifyToken);
 routes.post("/change_password",UserController.changePassword);
 
 // Order
-routes.post("/order/:idTable", OrderController.makeOrder);
+routes.post("/order/:idTable", auth, OrderController.makeOrder);
+
+// Table
+routes.get("/table/:idTable", auth, TableController.getTableActive);
 
 // Restaurant
 routes.post("/restaurant",RestaurantController.createRestaurant);

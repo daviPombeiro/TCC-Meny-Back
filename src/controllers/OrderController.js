@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Order = require("../models/Order");
 const Table = require("../models/Table");
 
@@ -7,7 +8,7 @@ module.exports = {
         const {total} = req.body;
         const list = {
             items: req.body.items,
-            user: req.body.user
+            user: req.decoded.user._id
         }
         let order = {};
 
