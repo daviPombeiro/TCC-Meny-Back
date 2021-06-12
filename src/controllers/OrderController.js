@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const Order = require("../models/Order");
 const Table = require("../models/Table");
 
@@ -40,6 +39,53 @@ module.exports = {
 
             return res.json(order);
             
+        } catch(error) {
+            return res.status(400).json({error});
+        }
+    },
+
+    async getOrder (req, res) {
+        try{
+            var clients = [];
+            var items = [];
+            var or = [];
+            let order = await Order
+                .findById(req.params.idOrder)
+                .populate({
+                    path: "orders",
+                    populate: {
+                        path: "items",
+                        model: "Items"
+                    }
+                })
+                .populate({
+                    path: "orders",
+                    populate: {
+                        path: "user",
+                        model: "User"
+                    }
+                });
+            
+            order.orders.forEach(a => {
+                let i = clients.indexOf(a.user);
+                if(i === -1){
+                    clients.push(a.user);
+                    items.push(a.items);
+                }else {
+                    items[i] = items[i].concat(a.items);
+                }
+            });
+
+            clients.forEach((element, index) => {
+                or.push({
+                    user: element.name,
+                    items: items[index]
+                });
+            });
+
+            const a = order.total - order.paid;
+            return res.json({order: or, total: a});
+
         } catch(error) {
             return res.status(400).json({error});
         }

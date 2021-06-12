@@ -16,7 +16,8 @@ routes.post("/verify_token",UserController.verifyToken);
 routes.post("/change_password",UserController.changePassword);
 
 // Order
-routes.post("/order/:idTable", auth, OrderController.makeOrder);
+routes.get("/order/:idOrder", auth, OrderController.getOrder);
+routes.post("/order/make/:idTable", auth, OrderController.makeOrder);
 
 // Table
 routes.get("/table/:idTable", auth, TableController.getTableActive);
