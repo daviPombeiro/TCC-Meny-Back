@@ -29,7 +29,7 @@ routes.get("/table/:idTable", auth, TableController.getTableActive);
 
 // Restaurant
 routes.post("/restaurant",RestaurantController.createRestaurant);
-routes.get("/restaurant/:idRestaurant", auth, RestaurantController.getRestaurant);
+routes.get("/restaurant/:idRestaurant", RestaurantController.getRestaurant);
 routes.get("/restaurant", auth,RestaurantController.index);
 
 // Restaurant Week Time
