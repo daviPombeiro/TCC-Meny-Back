@@ -25,6 +25,14 @@ module.exports = {
             return res.status(400).json({ error });
         }
     },
+    async getOneUser(req, res) {
+        try {
+            const user = await User.findOne({ _id: req.params.id});
+            return res.json(user);
+        } catch (error) {
+            return res.status(400).json({ error });
+        }
+    },
     async forgotPassword(req, res) {
         try {
             let user = await User.findOne({ email: req.body.email });
@@ -69,10 +77,34 @@ module.exports = {
             return res.status(400).json({ error });
         }
     },
-    async changePassword(req, res){
+    async changePassword(req, res) {
         try {
             req.body.password = await bcrypt.hash(req.body.password, parseInt(process.env.SALT_WORK_FACTOR));
-            const user = await User.updateOne({email: req.body.email._W}, {password: req.body.password});
+            const user = await User.updateOne({ email: req.body.email }, { password: req.body.password });
+            return res.json(user);
+        } catch (error) {
+            return res.status(400).json({ error });
+        }
+    },
+    async likeRestaurant(req, res) {
+        try {
+            let user = await User.findOne({ _id: req.body.user._id });
+            let exists = false;
+            let position = 0;
+            for (let count = 0; count < user.liked.length; count++) {
+                if (user.liked[count] == req.body.restaurant) {
+                    exists = true;
+                    position = count;
+                }
+            }
+
+            if (exists) {
+                user.liked.splice(position);
+            } else {
+                user.liked.push(req.body.restaurant);
+            }
+
+            user = await User.updateOne({ _id: req.body.user._id }, { liked: user.liked });
             return res.json(user);
         } catch (error) {
             return res.status(400).json({ error });

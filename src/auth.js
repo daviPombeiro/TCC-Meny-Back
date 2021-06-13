@@ -3,15 +3,12 @@ require("dotenv/config");
 
 const auth = (req,res,next) => {
     const authorization = req.headers['authorization'];
-    const token = (String(authorization).startsWith("Barear ")) ? authorization.slice(7, authorization.length) : authorization;
-    if(token === true){
+    const token = (String(authorization).startsWith("Bearer ")) ? authorization.slice(7, authorization.length) : authorization;
+    if(token){
         jwt.verify(token, process.env.SECRET_KEY, (err,decoded) => {
-            if(err){
-                return res.status(401).json({error: err.name });
-            }else{
-                req.decoded = decoded;
-                return next();
-            }
+            if(err) return res.status(401).json({error: err });
+            req.decoded = decoded;
+            return next();
         })
     }else{
         return res.status(401).json({error: "Unauthorized" });
