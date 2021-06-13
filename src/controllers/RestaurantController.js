@@ -13,15 +13,20 @@ module.exports = {
             }else{
                 rest = await Restaurant.find({}).populate('opening_hours');
             }
-
+            
             let todayWeekDay = new Date().getDay();
+            let openRestaurant = [];
+            let aberto = 0;
+            let fechado = 0;
             for(let count = 0; count < rest.length; count++){
-                if(!rest[count].opening_hours[todayWeekDay].isOpen){
-                    rest.splice(1,count);
+                if(rest[count].opening_hours[todayWeekDay].isOpen){
+                    aberto++;
+                    openRestaurant.push(rest[count]);
+                }else{
+                    fechado++;
                 }
             }
-
-            return res.json(rest);
+            return res.json(openRestaurant);
         } catch (error) {
             return res.status(400).json({error});
         }
