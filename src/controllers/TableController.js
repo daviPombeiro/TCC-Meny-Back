@@ -10,6 +10,9 @@ module.exports = {
         if(table.active){
             order = await Order.findOne({table: tableId, active: true});
         } else {
+            table.active = true;
+            await table.save();
+            
             const newOrder = {
                 table: tableId,
                 orders: [],

@@ -20,7 +20,7 @@ routes.post("/like",UserController.likeRestaurant);
 
 // Order
 routes.get("/order/:idOrder", auth, OrderController.getOrder);
-routes.post("/order/make/:idTable", auth, OrderController.makeOrder);
+routes.post("/order/make/:idOrder", auth, OrderController.makeOrder);
 routes.post("/pay/:idOrder", auth, OrderController.payOrder);
 routes.post("/pay/close/:idOrder", auth, OrderController.closeOrder);
 
