@@ -8,6 +8,7 @@ const RestaurantWeekTimeController = require("./controllers/RestaurantWeekTimeCo
 const AuthController = require("./controllers/AuthController");
 const OrderController = require("./controllers/OrderController");
 const TableController = require("./controllers/TableController");
+const EmployeeCOntroller = require("./controllers/EmployeeController");
 
 // User
 routes.post("/users",UserController.store);
@@ -38,5 +39,11 @@ routes.post("/restaurantWeekTime", auth,RestaurantWeekTimeController.store);
 
 // Login
 routes.post("/login",AuthController.login);
+routes.post("/loginEmployee", AuthController.loginEmployee);
+
+// Employee
+routes.post("/employee", EmployeeCOntroller.store);
+routes.get("/employee/activeOrders", auth, EmployeeCOntroller.getOpenOrders);
+routes.post("/employee/closeOrder", auth, EmployeeCOntroller.closeOrder);
 
 module.exports = routes;
