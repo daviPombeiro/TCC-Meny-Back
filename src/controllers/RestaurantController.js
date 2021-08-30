@@ -56,5 +56,87 @@ module.exports = {
         } catch(error) {
             return res.status(400).json({error});
         }
+    },
+    async getMonthlyBalance(req, res) {
+        const today = new Date();
+        const currentDate = `${today.getFullYear()}-${today.getMonth()}-01`;
+        const pastDate = `${today.getFullYear()}-${today.getMonth()-1}-01`;
+
+        const employee = req.decoded;
+
+        if(!employee.functions.include("admin")){
+            return res.status(401).json({ error: "Você não tem permissão para isso" });
+        }
+
+        var tables = []
+        await Restaurant.findById(employee.restaurant, function(err, rest){
+            tables = rest.tables;
+        });
+
+        var balance = 0
+        tables.forEach(tableId => {
+            const orders = await Order.find({ table: tableId, updatedAt: { $gte: pastDate, $lte: currentDate } });
+
+            orders.forEach(order => {
+                balance += order.price;
+            });
+        });
+
+        return await res.json({month: today.getMonth(), balance});
+    },
+    async getMenuRank(req, res) {
+        const today = new Date();
+        const currentDate = `${today.getFullYear()}-${today.getMonth()}-01`;
+        const pastDate = `${today.getFullYear()}-${today.getMonth()-1}-01`;
+
+        const employee = req.decoded;
+
+        if(!employee.functions.include("admin")){
+            return res.status(401).json({ error: "Você não tem permissão para isso" });
+        }
+
+        var tables = []
+        await Restaurant.findById(employee.restaurant, function(err, rest){
+            tables = rest.tables;
+        });
+
+        var ordersGrouped = []
+        tables.forEach(tableId => {
+            const orders = await Order.find({ table: tableId, updatedAt: { $gte: pastDate, $lte: currentDate } })
+                .populate({
+                    path: "orders",
+                    populate: {
+                        path: "items",
+                        model: "Items"
+                    }
+                });
+
+            for(var i = 0; i < orders.length; i++) {
+                orders[i].orders.forEach(ord => {
+                    ord.items.forEach(item => {
+                        let blob = true;
+                        for(var a = 0; a < ordersGrouped.length; a++) {
+                            if (ordersGrouped[a]._id == item._id){
+                                ordersGrouped[a].qntd += 1;
+                                blob = false;
+                            }
+                        }
+
+                        if(blob) {
+                            ordersGrouped.push({
+                                _id: item._id,
+                                name: item.name,
+                                price: item.price,
+                                description: item.description,
+                                image: item.image,
+                                qntd = 1
+                            });
+                        }
+                    });
+                });
+            }
+        });
+
+        return await res.json({month: today.getMonth(), ordersGrouped});
     }
 }

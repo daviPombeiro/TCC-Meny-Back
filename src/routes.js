@@ -32,6 +32,8 @@ routes.get("/table/:idTable", auth, TableController.getTableActive);
 routes.post("/restaurant",RestaurantController.createRestaurant);
 routes.get("/restaurant/:idRestaurant", RestaurantController.getRestaurant);
 routes.get("/restaurant", auth,RestaurantController.index);
+routes.get("/restaurant/monthBalance", auth, RestaurantController.getMonthlyBalance);
+routes.get("/restaurant/menuRank", auth, RestaurantController.getMenuRank);
 
 // Restaurant Week Time
 routes.get("/restaurantWeekTime", auth,RestaurantWeekTimeController.index);
