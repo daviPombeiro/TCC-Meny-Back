@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-
 const Restaurant = require("../models/Restaurant");
-const Item = require("../models/Item");
+const Order = require("../models/Order");
+const mongoose = require("mongoose");
 
 module.exports = {
     async index(req,res){
@@ -56,5 +55,91 @@ module.exports = {
         } catch(error) {
             return res.status(400).json({error});
         }
+    },
+    async getMonthlyBalance(req, res) {
+        const today = new Date();
+        const currentDate = `${today.getFullYear()}-${today.getMonth()+1}-01`;
+        const pastDate = `${today.getFullYear()}-${today.getMonth()}-01`;
+        
+        const employee = req.decoded.employee;
+
+        if(!employee.rolls.includes("admin")){
+            return res.status(401).json({ error: "Você não tem permissão para isso" });
+        }
+
+        var tables = []
+        await Restaurant.findById(employee.restaurant, function(err, rest){
+            tables = rest.tables;
+        });
+        
+        var balance = 0
+        for(let i = 0; i < tables.length; i++) {
+            let tableId = tables[i];
+            const orders = await Order.find({ table: tableId, updatedAt: { $gte: pastDate, $lte: currentDate } });
+
+            orders.forEach(order => {
+                balance += order.total;
+            });
+        };
+
+        return await res.json({month: today.getMonth(), balance});
+    },
+    async getMenuRank(req, res) {
+        const today = new Date();
+        const currentDate = `${today.getFullYear()}-${today.getMonth()+1}-01`;
+        const pastDate = `${today.getFullYear()}-${today.getMonth()}-01`;
+
+        const employee = req.decoded.employee;
+
+        if(!employee.rolls.includes("admin")){
+            return res.status(401).json({ error: "Você não tem permissão para isso" });
+        }
+
+        var tables = []
+        await Restaurant.findById(employee.restaurant, function(err, rest){
+            tables = rest.tables;
+        });
+
+        var ordersGrouped = []
+        for(let x = 0; x < tables.length; x++) {
+            let tableId = tables[x];
+            const orders = await Order.find({ table: tableId, active: true })
+            .populate({
+                path: "orders",
+                populate: {
+                    path: "items",
+                    model: "Items"
+                }
+            });
+
+            for(var i = 0; i < orders.length; i++) {
+                for(let c = 0; c < orders[i].orders.length; c++) {
+                    let ord = orders[i].orders[c];
+                    for(let b = 0; b < ord.items.length; b++) {
+                        let item = ord.items[b];
+                        let blob = true;
+                        for(var a = 0; a < ordersGrouped.length; a++) {
+                            if (ordersGrouped[a]._id == item._id){
+                                ordersGrouped[a].qntd += 1;
+                                blob = false;
+                            }
+                        }
+
+                        if(blob) {
+                            ordersGrouped.push({
+                                _id: item._id,
+                                name: item.name,
+                                price: item.price,
+                                description: item.description,
+                                image: item.image,
+                                qntd: 1
+                            });
+                        }
+                    }
+                }
+            }
+        }
+
+        return await res.json({month: today.getMonth(), ordersGrouped});
     }
 }

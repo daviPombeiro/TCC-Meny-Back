@@ -8,7 +8,8 @@ module.exports = {
         const {total} = req.body;
         const list = {
             items: req.body.items,
-            user: req.decoded.user._id
+            user: req.decoded.user._id,
+            making: true
         }
         let order = {};
         try{

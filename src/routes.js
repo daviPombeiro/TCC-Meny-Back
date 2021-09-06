@@ -8,8 +8,10 @@ const RestaurantWeekTimeController = require("./controllers/RestaurantWeekTimeCo
 const AuthController = require("./controllers/AuthController");
 const OrderController = require("./controllers/OrderController");
 const TableController = require("./controllers/TableController");
+const EmployeeController = require("./controllers/EmployeeController");
 
 // User
+routes.get("/", (req, res) => res.json(routes.stack));
 routes.post("/users",UserController.store);
 routes.get("/users",UserController.getUsers);
 routes.get("/users/:id",UserController.getOneUser);
@@ -31,6 +33,8 @@ routes.get("/table/:idTable", auth, TableController.getTableActive);
 routes.post("/restaurant",RestaurantController.createRestaurant);
 routes.get("/restaurant/:idRestaurant", RestaurantController.getRestaurant);
 routes.get("/restaurant", auth,RestaurantController.index);
+routes.post("/restaurant/monthBalance", auth, RestaurantController.getMonthlyBalance);
+routes.post("/restaurant/menuRank", auth, RestaurantController.getMenuRank);
 
 // Restaurant Week Time
 routes.get("/restaurantWeekTime", auth,RestaurantWeekTimeController.index);
@@ -38,5 +42,11 @@ routes.post("/restaurantWeekTime", auth,RestaurantWeekTimeController.store);
 
 // Login
 routes.post("/login",AuthController.login);
+routes.post("/loginEmployee", AuthController.loginEmployee);
+
+// Employee
+routes.post("/employee", EmployeeController.store);
+routes.get("/employee/activeOrders", auth, EmployeeController.getOpenOrders);
+routes.post("/employee/closeOrder", auth, EmployeeController.closeOrder);
 
 module.exports = routes;

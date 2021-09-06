@@ -1,4 +1,4 @@
-const RestaurantWeekTime = require("../models/RestaurantWeekTime");
+const RestaurantWeekTime = require("../models/restaurantWeekTime");
 
 module.exports = {
     async index(req,res){
