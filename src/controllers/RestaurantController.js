@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
-
 const Restaurant = require("../models/Restaurant");
-const Item = require("../models/Item");
+const Order = require("../models/Order");
+const mongoose = require("mongoose");
 
 module.exports = {
     async index(req,res){
@@ -59,12 +58,12 @@ module.exports = {
     },
     async getMonthlyBalance(req, res) {
         const today = new Date();
-        const currentDate = `${today.getFullYear()}-${today.getMonth()}-01`;
-        const pastDate = `${today.getFullYear()}-${today.getMonth()-1}-01`;
+        const currentDate = `${today.getFullYear()}-${today.getMonth()+1}-01`;
+        const pastDate = `${today.getFullYear()}-${today.getMonth()}-01`;
+        
+        const employee = req.decoded.employee;
 
-        const employee = req.decoded;
-
-        if(!employee.functions.include("admin")){
+        if(!employee.rolls.includes("admin")){
             return res.status(401).json({ error: "Você não tem permissão para isso" });
         }
 
@@ -72,26 +71,27 @@ module.exports = {
         await Restaurant.findById(employee.restaurant, function(err, rest){
             tables = rest.tables;
         });
-
+        
         var balance = 0
-        tables.forEach(tableId => {
+        for(let i = 0; i < tables.length; i++) {
+            let tableId = tables[i];
             const orders = await Order.find({ table: tableId, updatedAt: { $gte: pastDate, $lte: currentDate } });
 
             orders.forEach(order => {
-                balance += order.price;
+                balance += order.total;
             });
-        });
+        };
 
         return await res.json({month: today.getMonth(), balance});
     },
     async getMenuRank(req, res) {
         const today = new Date();
-        const currentDate = `${today.getFullYear()}-${today.getMonth()}-01`;
-        const pastDate = `${today.getFullYear()}-${today.getMonth()-1}-01`;
+        const currentDate = `${today.getFullYear()}-${today.getMonth()+1}-01`;
+        const pastDate = `${today.getFullYear()}-${today.getMonth()}-01`;
 
-        const employee = req.decoded;
+        const employee = req.decoded.employee;
 
-        if(!employee.functions.include("admin")){
+        if(!employee.rolls.includes("admin")){
             return res.status(401).json({ error: "Você não tem permissão para isso" });
         }
 
@@ -101,19 +101,22 @@ module.exports = {
         });
 
         var ordersGrouped = []
-        tables.forEach(tableId => {
-            const orders = await Order.find({ table: tableId, updatedAt: { $gte: pastDate, $lte: currentDate } })
-                .populate({
-                    path: "orders",
-                    populate: {
-                        path: "items",
-                        model: "Items"
-                    }
-                });
+        for(let x = 0; x < tables.length; x++) {
+            let tableId = tables[x];
+            const orders = await Order.find({ table: tableId, active: true })
+            .populate({
+                path: "orders",
+                populate: {
+                    path: "items",
+                    model: "Items"
+                }
+            });
 
             for(var i = 0; i < orders.length; i++) {
-                orders[i].orders.forEach(ord => {
-                    ord.items.forEach(item => {
+                for(let c = 0; c < orders[i].orders.length; c++) {
+                    let ord = orders[i].orders[c];
+                    for(let b = 0; b < ord.items.length; b++) {
+                        let item = ord.items[b];
                         let blob = true;
                         for(var a = 0; a < ordersGrouped.length; a++) {
                             if (ordersGrouped[a]._id == item._id){
@@ -129,13 +132,13 @@ module.exports = {
                                 price: item.price,
                                 description: item.description,
                                 image: item.image,
-                                qntd = 1
+                                qntd: 1
                             });
                         }
-                    });
-                });
+                    }
+                }
             }
-        });
+        }
 
         return await res.json({month: today.getMonth(), ordersGrouped});
     }

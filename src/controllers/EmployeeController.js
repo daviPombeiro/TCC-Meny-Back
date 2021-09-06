@@ -1,4 +1,3 @@
-const EMployee = require("../models/Employee");
 const bcrypt = require('bcryptjs');
 const sgMail = require('@sendgrid/mail');
 const Employee = require("../models/Employee");
@@ -21,9 +20,9 @@ module.exports = {
         }
     },
     async getOpenOrders(req, res) {
-        const employee = req.decoded;
-
-        if(!employee.functions.include("cheff")){
+        const employee = req.decoded.employee;
+        
+        if(!employee.rolls.includes("cheff")){
             return res.status(401).json({ error: "Você não tem permissão para isso" });
         }
 
@@ -33,8 +32,9 @@ module.exports = {
         });
 
         var activeOrder = []
-        tables.forEach(tableId => {
-            const orders = await Order.find({ table: tableId }).populate("table")
+        for(let a = 0; a < tables.length; a++){
+            let tableId = tables[a];
+            const orders = await Order.find({ table: tableId, active: true }).populate("table")
             .populate({
                 path: "orders",
                 populate: {
@@ -51,7 +51,7 @@ module.exports = {
             });
 
             for(var i = 0; i < orders.length; i++) {
-                orders[i].orders.forEach(ord => {
+                await orders[i].orders.forEach(ord => {
                     if(ord.making) {
                         let obj = {
                             orderId: ord._id,
@@ -64,9 +64,9 @@ module.exports = {
                     }
                 });
             }
-        });
+        };
 
-        return res.json(activeOrder);
+        return await res.json(activeOrder);
 
     },
     async closeOrder(req, res) {
