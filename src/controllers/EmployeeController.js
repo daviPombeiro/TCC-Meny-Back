@@ -3,6 +3,7 @@ const sgMail = require('@sendgrid/mail');
 const Employee = require("../models/Employee");
 const Restaurant = require("../models/Restaurant");
 const Order = require("../models/Order");
+const jwt = require("jsonwebtoken");
 require("dotenv/config");
 
 module.exports = {
@@ -78,5 +79,50 @@ module.exports = {
         await order.save();
 
         return res.json(order);
-    }
+    },
+    async forgotPassword(req, res) {
+        try {
+            let employee = await Employee.findOne({ email: req.body.email });
+            if (!employee) {
+                return res.status(400).json({ error: "Email não existente" });
+            }
+
+            const token = jwt.sign({ employee }, process.env.SECRET_KEY);
+            sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+            await sgMail.send({
+                to: employee.email,
+                from: 'menyappdr@gmail.com',
+                templateId: 'd-364dba6659654fe58bcfbfa92f75016e',
+                dynamic_template_data: {
+                    name: employee.name,
+                    link: process.env.LINK_FORGOT_PASSWORD +'/'+token
+                }
+            });
+
+            return res.json(employee);
+        } catch (error) {
+            console.log(error)
+            return res.status(400).json({ error });
+        }
+    },
+    async changePassword(req, res) {
+        try {
+            const { token, password } = req.body;
+            let employee = {}
+            jwt.verify(token, process.env.SECRET_KEY, async (error, decoded) => {
+                if (error) {
+                    return res.status(400).json({ error: "Token invalid" });
+                }
+                const passwordHash = await bcrypt.hash(password, 10);
+                let { employee } = decoded;
+                employee = await Employee.findOneAndUpdate({ _id: employee._id }, { password: passwordHash }, { new: true });
+               
+                return res.send();
+            });
+            return res.json(employee);
+        } catch (error) {
+            console.log(error)
+            return res.status(400).json({ error });
+        }
+    },
 }

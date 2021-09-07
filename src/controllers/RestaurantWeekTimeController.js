@@ -16,5 +16,5 @@ module.exports = {
         } catch (error) {
             return res.status(400).json({error});
         }
-    },
+    }
 }

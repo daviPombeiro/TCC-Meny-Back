@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const RestaurantWeekTime = new mongoose.Schema({
+const RestaurantWeekTimeSchema = new mongoose.Schema({
     
     restaurant: {type: mongoose.Schema.Types.ObjectId, ref: "Restaurant", required: true},
     openHour: {type: Number, required: true},
@@ -10,4 +10,4 @@ const RestaurantWeekTime = new mongoose.Schema({
 
 }, { timestamps: {} });
 
-module.exports = mongoose.model('RestaurantWeekTime', RestaurantWeekTime);
+module.exports = mongoose.model('RestaurantWeekTime', RestaurantWeekTimeSchema);

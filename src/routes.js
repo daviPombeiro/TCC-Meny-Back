@@ -1,5 +1,7 @@
 const express = require('express');
 const routes = express.Router();
+const multer = require("multer");
+const upload = require("./config/upload");
 const auth = require('./auth');
 
 const UserController = require("./controllers/UserController");
@@ -20,6 +22,10 @@ routes.post("/verify_token",UserController.verifyToken);
 routes.post("/change_password",UserController.changePassword);
 routes.post("/like",UserController.likeRestaurant);
 
+// Employee
+routes.post("/forgot_password_employee",EmployeeController.forgotPassword);
+routes.put("/change_password_employee",EmployeeController.changePassword);
+
 // Order
 routes.get("/order/:idOrder", auth, OrderController.getOrder);
 routes.post("/order/make/:idOrder", auth, OrderController.makeOrder);
@@ -30,7 +36,7 @@ routes.post("/pay/close/:idOrder", auth, OrderController.closeOrder);
 routes.get("/table/:idTable", auth, TableController.getTableActive);
 
 // Restaurant
-routes.post("/restaurant",RestaurantController.createRestaurant);
+routes.post("/restaurant",multer(upload.restaurant).single("file"),RestaurantController.createRestaurant);
 routes.get("/restaurant/:idRestaurant", RestaurantController.getRestaurant);
 routes.get("/restaurant", auth,RestaurantController.index);
 routes.post("/restaurant/monthBalance", auth, RestaurantController.getMonthlyBalance);

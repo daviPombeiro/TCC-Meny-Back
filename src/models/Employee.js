@@ -7,10 +7,8 @@ const EmployeeSchema = new mongoose.Schema({
     password: {type: String,required: true},
     birthday: {type: Date,required: true},
     cpf: {type: String,required: true},
-    tokenPassword: {type: String,required: false},
-    datePassword: {type: Date,required: false},
     restaurant: {type: mongoose.Schema.Types.ObjectId, ref: "Restaurant", required: true},
-    functions: [{type: String, required: false}]
+    rolls: [{type: String, required: false}]
 
 }, { timestamps: {} });
 
