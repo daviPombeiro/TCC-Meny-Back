@@ -18,10 +18,11 @@ const RestaurantSchema = new mongoose.Schema({
     
     name: {type: String, required: true},
     address: {type: addressSchema, required: true},
-    opening_hours: [{type: mongoose.Schema.Types.ObjectId, ref: "RestaurantWeekTime",require: true}],
+    opening_hours: [{type: mongoose.Schema.Types.ObjectId, ref: "RestaurantWeekTime",require: false}],
     menu: {type: [SectionSchema], default: []},
-    tables: [{type: mongoose.Types.ObjectId, ref: "Tables"}],
+    tables: [{type: mongoose.Types.ObjectId, ref: "Table"}],
     image:{type:String, required: true},
+    imageKey:{type:String, required: true},
     category:{type:String, required: true}
 
 }, { timestamps: {} });

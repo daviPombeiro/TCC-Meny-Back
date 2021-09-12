@@ -1,17 +1,21 @@
 const express = require('express');
 const routes = express.Router();
+const multer = require("multer");
+const upload = require("./config/upload");
 const auth = require('./auth');
 
 const UserController = require("./controllers/UserController");
 const RestaurantController = require("./controllers/RestaurantController");
 const RestaurantWeekTimeController = require("./controllers/RestaurantWeekTimeController");
 const AuthController = require("./controllers/AuthController");
-//const OrderController = require("./controllers/OrderController");
-//const TableController = require("./controllers/TableController");
-//const EmployeeController = require("./controllers/EmployeeController");
-//const ItemController = require("./controllers/ItemController");
+const OrderController = require("./controllers/OrderController");
+const TableController = require("./controllers/TableController");
+const EmployeeController = require("./controllers/EmployeeController");
+const ItemController = require("./controllers/ItemController");
+
 
 // User
+routes.get("/", (req, res) => res.json(routes.stack));
 routes.post("/users",UserController.store);
 routes.get("/users",UserController.getUsers);
 routes.get("/users/:id",UserController.getOneUser);
@@ -21,28 +25,30 @@ routes.post("/change_password",UserController.changePassword);
 routes.post("/like",UserController.likeRestaurant);
 
 // Item
-//routes.get("/item", auth,ItemController.index);
-//routes.post("/item", auth,multer(upload.item).single("file"),ItemController.store);
-//routes.put("/item/:id", auth,multer(upload.item).single("file"),ItemController.update);
-//routes.delete("/item/:id", auth,ItemController.delete);
+routes.get("/item", auth,ItemController.index);
+routes.post("/item", auth,multer(upload.item).single("file"),ItemController.store);
+routes.put("/item/:id", auth,multer(upload.item).single("file"),ItemController.update);
+routes.delete("/item/:id", auth,ItemController.delete);
 
 // Employee
-//routes.post("/forgot_password_employee",EmployeeController.forgotPassword);
-//routes.put("/change_password_employee",EmployeeController.changePassword);
+routes.post("/forgot_password_employee",EmployeeController.forgotPassword);
+routes.put("/change_password_employee",EmployeeController.changePassword);
 
 // Order
-//routes.get("/order/:idOrder", auth, OrderController.getOrder);
-//routes.post("/order/make/:idOrder", auth, OrderController.makeOrder);
-//routes.post("/pay/:idOrder", auth, OrderController.payOrder);
-//routes.post("/pay/close/:idOrder", auth, OrderController.closeOrder);
+routes.get("/order/:idOrder", auth, OrderController.getOrder);
+routes.post("/order/make/:idOrder", auth, OrderController.makeOrder);
+routes.post("/pay/:idOrder", auth, OrderController.payOrder);
+routes.post("/pay/close/:idOrder", auth, OrderController.closeOrder);
 
 // Table
-//routes.get("/table/:idTable", auth, TableController.getTableActive);
+routes.get("/table/:idTable", auth, TableController.getTableActive);
 
 // Restaurant
-routes.post("/restaurant",RestaurantController.createRestaurant);
-routes.get("/restaurant/:idRestaurant", auth, RestaurantController.getRestaurant);
+routes.post("/restaurant",multer(upload.restaurant).single("file"),RestaurantController.createRestaurant);
+routes.get("/restaurant/:idRestaurant", RestaurantController.getRestaurant);
 routes.get("/restaurant", auth,RestaurantController.index);
+routes.post("/restaurant/monthBalance", auth, RestaurantController.getMonthlyBalance);
+routes.post("/restaurant/menuRank", auth, RestaurantController.getMenuRank);
 
 // Restaurant Week Time
 routes.get("/restaurantWeekTime", auth,RestaurantWeekTimeController.index);
@@ -50,5 +56,11 @@ routes.post("/restaurantWeekTime", auth,RestaurantWeekTimeController.store);
 
 // Login
 routes.post("/login",AuthController.login);
+routes.post("/loginEmployee", AuthController.loginEmployee);
+
+// Employee
+routes.post("/employee", EmployeeController.store);
+routes.get("/employee/activeOrders", auth, EmployeeController.getOpenOrders);
+routes.post("/employee/closeOrder", auth, EmployeeController.closeOrder);
 
 module.exports = routes;

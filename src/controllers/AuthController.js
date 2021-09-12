@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const Employee = require("../models/Employee");
 const jwt = require("jsonwebtoken");
 const bcrypt = require('bcryptjs');
 require("dotenv/config");
@@ -21,8 +22,9 @@ module.exports = {
             return res.status(400).json({error});
         }
 
+
     },
-    /*async loginEmployee(req,res){
+    async loginEmployee(req,res){
         try {
             const {email, password} = req.body;
             const employee = await Employee.findOne({email: email});
@@ -38,6 +40,6 @@ module.exports = {
         } catch (error) {
             return res.status(400).json({error});
         }
-    }*/
+    }
 }
 
