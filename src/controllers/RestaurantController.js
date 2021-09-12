@@ -152,8 +152,8 @@ module.exports = {
     },
     async getMonthlyBalance(req, res) {
         const today = new Date();
-        const currentDate = `${today.getFullYear()}-${today.getMonth()+1}-01`;
-        const pastDate = `${today.getFullYear()}-${today.getMonth()}-01`;
+        const currentDate = `${today.getFullYear()}-${today.getMonth()+2}-01`;
+        const pastDate = `${today.getFullYear()}-${today.getMonth()+1}-01`;
         
         const employee = req.decoded.employee;
 

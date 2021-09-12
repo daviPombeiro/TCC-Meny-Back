@@ -52,11 +52,11 @@ module.exports = {
             });
 
             for(var i = 0; i < orders.length; i++) {
-                await orders[i].orders.forEach(ord => {
+                await orders[i].orders.forEach((ord, a) => {
                     if(ord.making) {
                         let obj = {
-                            orderId: ord._id,
-                            orderPos: i,
+                            orderId: orders[i]._id,
+                            orderPos: a,
                             tableName: orders[i].table.name,
                             order: ord
                         }
@@ -73,8 +73,8 @@ module.exports = {
     async closeOrder(req, res) {
         const { orderId, orderPos } = req.body;
 
-        const order = Order.findById(orderId);
-
+        const order = await Order.findById(orderId);
+        
         order.orders[orderPos].making = false;
         await order.save();
 
