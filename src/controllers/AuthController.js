@@ -21,6 +21,8 @@ module.exports = {
         } catch (error) {
             return res.status(400).json({error});
         }
+
+
     },
     async loginEmployee(req,res){
         try {
